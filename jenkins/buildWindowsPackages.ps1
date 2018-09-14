@@ -33,7 +33,6 @@ clearResults
 
 . $env:EDITION
 . $env:STATICEXECUTABLES
-. $env:SKIPPACKAGING
 . $env:MAINTAINER
 . $env:BUILDMODE
 

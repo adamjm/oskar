@@ -5,7 +5,7 @@ lockDirectory ; updateOskar ; clearResults
 
 community
 
-switchBranches 3.4 3.4
+switchBranches 3.4 3.4 true
 and findArangoDBVersion
 and buildStaticArangoDB -DTARGET_ARCHITECTURE=nehalem
 and downloadStarter
@@ -14,7 +14,7 @@ and docker push arangodb/arangodb-preview:3.4
 and docker tag arangodb/arangodb-preview:3.4 registry.arangodb.biz:5000/arangodb/linux-community-maintainer:3.4
 and docker push registry.arangodb.biz:5000/arangodb/linux-community-maintainer:3.4
 
-if test $status != 0
+if test $status -ne 0
   echo Production of community image failed, giving up...
   cd "$HOME/$NODE_NAME/oskar" ; moveResultsToWorkspace ; unlockDirectory
   exit 1
@@ -22,7 +22,7 @@ end
 
 enterprise
 
-switchBranches 3.4 3.4
+switchBranches 3.4 3.4 true
 and findArangoDBVersion
 and buildStaticArangoDB -DTARGET_ARCHITECTURE=nehalem
 and downloadStarter
