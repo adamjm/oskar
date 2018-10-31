@@ -7,6 +7,7 @@ set -gx UBUNTUBUILDIMAGE neunhoef/ubuntubuildarangodb-$ARCH
 set -gx UBUNTUPACKAGINGIMAGE neunhoef/ubuntupackagearangodb-$ARCH
 set -gx ALPINEBUILDIMAGE neunhoef/alpinebuildarangodb-$ARCH
 set -gx CENTOSPACKAGINGIMAGE neunhoef/centospackagearangodb-$ARCH
+set -gx PERFGRAPHIMAGE mchacki/arangoperftestcollector-$ARCH
 
 function buildUbuntuBuildImage
   cd $WORKDIR
@@ -51,6 +52,12 @@ function buildCentosPackagingImage
 end
 function pushCentosPackagingImage ; docker push $CENTOSPACKAGINGIMAGE ; end
 function pullCentosPackagingImage ; docker pull $CENTOSPACKAGINGIMAGE ; end
+
+function buildPerfGraphImage
+  docker build -t $PERFGRAPHIMAGE "$WORKDIR/containers/perfTestCollector.docker"
+end
+function pushPerfGraphImage ; docker push $PERFGRAPHIMAGE ; end
+function pullPerfGraphImage ; docker pull $PERFGRAPHIMAGE ; end
 
 function remakeImages
   buildUbuntuBuildImage
