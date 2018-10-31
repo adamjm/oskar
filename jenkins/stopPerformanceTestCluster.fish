@@ -43,9 +43,11 @@ function createGraphs
   echo "Rendering graphs ..."
   echo "Parameters: $WORKDIR || $INNERWORKDIR || $PERFGRAPHIMAGE"
   and docker run -v $WORKDIR/work:$INNERWORKDIR $PERFGRAPHIMAGE
-  and echo "Moving graphs to $WORKSPACE ..."
+  set -l s $status
+  echo "Moving graphs to $WORKSPACE ..."
   and mv "$WORKDIR/work/graphs/*" $WORKSPACE
   and echo "done."
+  return s
 end
 
 stopAndArchive
