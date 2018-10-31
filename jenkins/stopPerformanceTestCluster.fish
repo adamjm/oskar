@@ -30,7 +30,6 @@ function stopAndArchive
       # try graceful shutdown
       eval $STARTER stop
     end
-    archiveAgency
     archiveDBServer
     archiveCoordinator
     moveResultsToWorkspace
@@ -40,6 +39,7 @@ end
 
 function createGraphs
   echo "Rendering graphs ..."
+  echo "Parameters: $WORKDIR || $INNERWORKDIR || $PERFGRAPHIMAGE"
   and docker run -v $WORKDIR/work:$INNERWORKDIR $PERFGRAPHIMAGE
   and echo "Moving graphs to $WORKSPACE ..."
   and mv "$WORKDIR/work/graphs/*" $WORKSPACE
