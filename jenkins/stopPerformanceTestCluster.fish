@@ -47,7 +47,7 @@ function createGraphs
   echo "Moving graphs to $WORKSPACE ..."
   and mv "$WORKDIR/work/graphs/*" $WORKSPACE
   and echo "done."
-  return s
+  return $s
 end
 
 stopAndArchive
