@@ -38,6 +38,8 @@ function stopAndArchive
 end
 
 function createGraphs
+  set -gx ARCH (uname -m)
+  set -gx PERFGRAPHIMAGE mchacki/arangoperftestcollector-$ARCH
   echo "Rendering graphs ..."
   echo "Parameters: $WORKDIR || $INNERWORKDIR || $PERFGRAPHIMAGE"
   and docker run -v $WORKDIR/work:$INNERWORKDIR $PERFGRAPHIMAGE
