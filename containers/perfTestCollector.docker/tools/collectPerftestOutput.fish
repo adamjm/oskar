@@ -42,6 +42,7 @@ function collectLocalOutput
   set -l csvFold "/work/outputFiles"
   set -l graphsFold "/work/graphs"
   set -l TOOLS "/tools"
+  echo "Start rendering graphs..."
   mkdir -p $graphsFold
   and cd $graphsFold
   and eval gnuplot -c $TOOLS/single.gnu insert
@@ -50,6 +51,7 @@ function collectLocalOutput
   and tar czf raw_data.tar.gz "$csvFold/"
   and eval $TOOLS/validateSingleValues
   set -l s $status
+  echo "Rendering graphs completed with status: $s"
   cd ..
   return $s
 end
