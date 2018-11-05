@@ -55,9 +55,9 @@ type pair struct {
 func main() {
   success := true
   allowed := make(map[string]pair)
-  allowed["insert"] = pair{400.0, 4000.0}
-  allowed["get"] = pair{400.0, 8000.0}
-  allowed["replace"] = pair{400.0, 2500.0}
+  allowed["insert"] = pair{1000.0, 4000.0}
+  allowed["get"] = pair{1000.0, 8000.0}
+  allowed["replace"] = pair{1000.0, 2500.0}
 
   for _, test := range []string{"insert", "get", "replace"} {
     lat, tp, err := getMaxInFile(strings.Join([]string{"/work/outputFiles/", test, ".csv"}, ""))
