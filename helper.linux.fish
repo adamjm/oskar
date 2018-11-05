@@ -341,6 +341,7 @@ function updateOskar
   and pullAlpineBuildImage
   and pullUbuntuPackagingImage
   and pullCentosPackagingImage
+  and pullPerfGraphImage
 end
 
 function downloadStarter
