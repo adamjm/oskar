@@ -32,9 +32,10 @@ function startClusterStarter
   set -l ARANGOD_PATH "$LOCALWORKDIR/ArangoDB/build/bin/arangod"
   set -l STARTER "$LOCALWORKDIR/ArangoDB/build/install/usr/bin/arangodb"
   set -l REPLTIMEOUT "--all.cluster.synchronous-replication-timeout-factor 5"
+  set -l ROCKSDB_OPTS "--all.rocksdb.level0-stop-trigger 360"
   # Tell jenkins to not kill this job.
   set -xg BUILD_ID dontKillMe
-  eval $STARTER start --starter.wait --starter.data-dir $DATA_PATH --server.js-dir $JS_PATH --server.arangod $ARANGOD_PATH $ENTERPRISE_JS_PATH $JOIN_PART --server.storage-engine $STORAGE_ENGINE --all.server.maximal-threads 512 $REPLTIMEOUT
+  eval $STARTER start --starter.wait --starter.data-dir $DATA_PATH --server.js-dir $JS_PATH --server.arangod $ARANGOD_PATH $ENTERPRISE_JS_PATH $JOIN_PART --server.storage-engine $STORAGE_ENGINE --all.server.maximal-threads 512 $ROCKSDB_OPTS
   or begin ; echo "Failed to start the cluster" ; exit 1 ; end
 end
 
