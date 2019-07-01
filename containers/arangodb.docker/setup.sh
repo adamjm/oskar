@@ -13,4 +13,16 @@ mkdir /docker-entrypoint-initdb.d/
 sed -i -e 's~^endpoint.*8529$~endpoint = tcp://0.0.0.0:8529~' /etc/arangodb3/arangod.conf
 # Remove the uid setting in the config file, since we want to be able
 # to run as an arbitrary user:
-sed -i -e 's~^uid = .*$~~' /etc/arangodb3/arangod.conf
+sed -i \
+    -e 's!^\(file\s*=\s*\).*!\1 -!' \
+    -e 's~^uid = .*$~~' \
+    /etc/arangodb3/arangod.conf
+
+rm -f /usr/bin/foxx
+cat >> /usr/bin/foxx <<'EOF'
+#!/bin/sh
+test -d /tmp/foxx || mkdir -m 700 /tmp/foxx
+export HOME=/tmp/foxx
+exec /usr/lib/node_modules/foxx-cli/bin/foxx "$@"
+EOF
+chmod 755 /usr/bin/foxx

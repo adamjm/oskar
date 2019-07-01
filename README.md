@@ -7,8 +7,19 @@ the build and test commands without `Docker`.
 
 ## Initial setup (Linux and MacOSX)
 
+Place a pair of SSH keys in `~/.ssh/`
+- private key: `id_rsa`
+- public key: `id_rsa.pub`
+
+Set appropriate permissions for the key files:
+- `sudo chmod 600 ~/.ssh/id_rsa`
+- `sudo chmod 600 ~/.ssh/id_rsa.pub`
+
+Add the identity using the private key file:
+- `ssh-add ~/.ssh/id_rsa`
+
 Once you have cloned this repo and have set up `ssh-agent` with a
-private key that is registered with `github`, the initial setup is as
+private key that is registered on *GitHub*, the initial setup is as
 follows (in `fish`, so start a `fish` shell first if it is not your
 login shell):
 
@@ -20,6 +31,16 @@ This will pull the Docker image, start up a build and test container
 and clone the ArangoDB source (optionally including the enterprise
 code) into a subdirectory `work` in the current directory. It will
 also show its current configuration.
+
+### Configurations and Secrets
+
+Oskar uses some environments variable, see the chapter *Environment*.
+You can create a file `config/environment.fish` to preset these variables.
+
+For example
+
+    set -xg COMMUNITY_DOWNLOAD_LINK "https://community.arangodb.com"
+    set -xg ENTERPRISE_DOWNLOAD_LINK "https://enterprise.arangodb.com"
 
 ## Initial setup (Windows)
 
@@ -71,7 +92,7 @@ You can then do
 
 for a static build or
 
-	buildArangoDB
+    buildArangoDB
 	
 for a non-static build.
 
@@ -103,7 +124,7 @@ with the command
 
 ## Building and testing
 
-Build ArangoDB with the current build options by issueing
+Build ArangoDB with the current build options by issuing
 
     buildStaticArangoDB
 
@@ -144,6 +165,8 @@ After that, essentially all resources used by oskar are freed again.
 
 # Reference Manual
 
+## Environment Variables
+
 ## Select Branches
 
 ### switchBranches
@@ -169,7 +192,7 @@ switch on/off maintainer mode when building
     debugMode
     releaseMode
 
-build `Debug` (debugMode) or `RelWithDepInfo` (releaseMode)
+build `Debug` (debugMode) or `RelWithDebInfo` (releaseMode)
 
     community
     enterprise
@@ -178,11 +201,60 @@ build enterprise edition (enterprise) or community version (community)
 
     parallelism <PARALLELSIM>
 
-if supported, set numer of concurrent builds to `PARALLELISM`
+if supported, set number of concurrent builds to `PARALLELISM`
 
 ## Testing
 
 ## Documentation
+
+To build the Docker documentation container from the current oskar
+working tree, run:
+
+    ./scripts/buildContainerDocumentation <IMAGE_NAME>
+
+The [official image](https://hub.docker.com/r/arangodb/arangodb-documentation)
+is called `arangodb/arangodb-documentation`.
+
+To rebuild the container after Gitbook plugins were changed externally,
+it is required to invalidate the cache with  `--force-update`:
+
+    ./scripts/buildContainerDocumentation arangodb/arangodb-documentation --force-update
+
+If you want to inspect the filesystem in the container, you can do:
+
+    docker run -it --entrypoint=/bin/bash arangodb/arangodb-documentation
+    ls /
+
+Hit `Ctrl+D` to exit.
+
+If you want to start the container with the oskar directory mounted
+(including `work/ArangoDB/`) then specify the path mapping with `-v`:
+
+    docker run -v "/home/<NAME>/oskar:/oskar" ...
+
+To build the documentation with the `arangodb/arangodb-documentation` image, run:
+
+    ./scripts/buildDocumentation
+
+If you don't want to generate the examples and `api-docs.json` and build
+only a subset of books, run:
+
+    ./scripts/buildDocumentation --skip-examples --skip-swagger --books "AQL Cookbook"
+
+The resulting files are located in `~/oskar/work/build-documentation/`
+(if your oskar directory is in your user folder). You may use
+[serve](https://github.com/zeit/serve) to view the generated website version
+of the documentation:
+
+    serve ~/oskar/work/build-documentation/books_html/
+
+See the comments in the [buildDocumentation](./scripts/buildDocumentation)
+script for more options.
+
+Changes to the container should first be tested and merged into the oskar
+master branch. Then the image can be (re-)built and published for Jenkins:
+
+    docker push arangodb/arangodb-documentation
 
 ## Packaging
 
@@ -194,11 +266,11 @@ creates all release packages.
 
 You need to set the following environment variables:
 
-    set -xg COMMUNITY_DOWNLOAD_LINK "https://download.arangodb.com"
-    set -xg ENTERPRISE_DOWNLOAD_LINK "https://download.arangodb.com"
+    set -xg COMMUNITY_DOWNLOAD_LINK "https://community.arangodb.com"
+    set -xg ENTERPRISE_DOWNLOAD_LINK "https://enterprise.arangodb.com"
 
 The prefix for the link of the community and enterprise edition that
-is used to construct the download link in the sniplets.
+is used to construct the download link in the snippets.
 
     set -xg DOWNLOAD_SYNC_USER username:password
 
@@ -211,13 +283,12 @@ Under linux:
 - RPM, Debian and tar.gz
 - server and client
 - community and enterprise
-- html sniplets for debian, rpm, generic linux
+- html snippets for debian, rpm, generic linux
 
 Under MacOSX:
 
 - DMG and tar.gz
 - community and enterprise
-- html sniplets for macosx
+- html snippets for macosx
 
 ## Internals
-

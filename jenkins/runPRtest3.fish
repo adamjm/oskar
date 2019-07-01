@@ -3,6 +3,7 @@ source jenkins/helper.jenkins.fish;
 
 and prepareOskar; and lockDirectory ; and updateOskar ; and clearResults
 and eval $EDITION ; and eval $STORAGE_ENGINE ; and eval $TEST_SUITE
+and skipGrey
 
 if $status -ne 0; return $status ; end
 
@@ -16,5 +17,5 @@ and oskar1
 and buildDocumentationInPR
 
 set -l s $status
-cd "$HOME/$NODE_NAME/oskar" ; moveResultsToWorkspace ; unlockDirectory 
+cd "$HOME/$NODE_NAME/$OSKAR" ; moveResultsToWorkspace ; unlockDirectory 
 exit $s

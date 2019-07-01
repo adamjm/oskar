@@ -3,8 +3,7 @@ source jenkins/helper.jenkins.fish ; prepareOskar
 
 lockDirectory ; updateOskar ; clearResults
 
-eval $EDITION ; eval $STORAGE_ENGINE ; eval $TEST_SUITE
-parallelism 24
+eval $EDITION ; eval $STORAGE_ENGINE ; eval $TEST_SUITE ; skipGrey
 
 echo "--------------------------------------------------------------------------------"
 showConfig
@@ -16,6 +15,6 @@ switchBranches $ARANGODB_BRANCH $ENTERPRISE_BRANCH true
 and oskar1
 
 set -l s $status
-cd "$HOME/$NODE_NAME/oskar" ; moveResultsToWorkspace ; unlockDirectory 
+cd "$HOME/$NODE_NAME/$OSKAR" ; moveResultsToWorkspace ; unlockDirectory 
 exit $s
 

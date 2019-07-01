@@ -19,7 +19,7 @@ echo on branch $ENTERPRISE_BRANCH of enterprise repository.
 
 switchBranches $ARANGODB_BRANCH $ENTERPRISE_BRANCH true
 and buildStaticArangoDB
-and if $ALLFORMATS
+and if test $ALLFORMATS = "true"
     buildDocumentationForRelease
 else 
     buildDocumentation
@@ -30,7 +30,7 @@ if test $status_build -ne 0
   echo Build failure with maintainer mode off in $EDITION.
 end
 
-cd "$HOME/$NODE_NAME/oskar"; and moveResultsToWorkspace; and unlockDirectory
+cd "$HOME/$NODE_NAME/$OSKAR"; and moveResultsToWorkspace; and unlockDirectory
 
 set -l status_cleanup $status
 if test $status_cleanup -ne 0

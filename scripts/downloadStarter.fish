@@ -28,7 +28,8 @@ echo Using STARTER_REV "$STARTER_REV"
 
 mkdir -p $STARTER_FOLDER
 set -l STARTER_PATH $STARTER_FOLDER/arangodb
-curl -s -L -o "$STARTER_PATH" "https://github.com/arangodb-helper/arangodb/releases/download/$STARTER_REV/arangodb-$PLATFORM-amd64"
-
+echo "https://github.com/arangodb-helper/arangodb/releases/download/$STARTER_REV/arangodb-$PLATFORM-amd64"
+and curl -s -L -o "$STARTER_PATH" "https://github.com/arangodb-helper/arangodb/releases/download/$STARTER_REV/arangodb-$PLATFORM-amd64"
 and chmod 755 "$STARTER_PATH"
 and echo Starter ready for build $STARTER_PATH
+or begin echo "ERROR - cannot download Starter"; exit 1; end
