@@ -45,7 +45,7 @@ function createGraphs
   and docker run -v $WORKDIR/work:$INNERWORKDIR $PERFGRAPHIMAGE
   set -l s $status
   echo "Moving graphs to $WORKSPACE ..."
-  and mv "$WORKDIR/work/graphs/*" $WORKSPACE
+  and mv "$WORKDIR/work/graphs/" $WORKSPACE
   and echo "done."
   return $s
 end
