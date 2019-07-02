@@ -37,18 +37,4 @@ function stopAndArchive
   cleanup
 end
 
-function createGraphs
-  set -gx ARCH (uname -m)
-  set -gx PERFGRAPHIMAGE mchacki/arangoperftestcollector-$ARCH
-  echo "Rendering graphs ..."
-  echo "Parameters: $WORKDIR || $INNERWORKDIR || $PERFGRAPHIMAGE"
-  and docker run -v $WORKDIR/work:$INNERWORKDIR $PERFGRAPHIMAGE
-  set -l s $status
-  echo "Moving graphs to $WORKSPACE ..."
-  and mv "$WORKDIR/work/graphs/" $WORKSPACE
-  and echo "done."
-  return $s
-end
-
 stopAndArchive
-createGraphs
