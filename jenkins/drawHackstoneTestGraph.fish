@@ -3,11 +3,11 @@
 source jenkins/helper.jenkins.fish ; prepareOskar
 lockDirectory ; updateOskar ; clearResults
 
-set -xl dataBaseDir /mnt/buildfiles/performance/hackstone
-set -xl RUN_DATE (date "+%y%m%d")
-set -xl plotImage pavlov99/gnuplot
-set -xl desc work/description.html
-set -xl rawDir $dataBaseDir/$ARANGODB_BRANCH/$RUN_DATE/RAW
+set -g dataBaseDir /mnt/buildfiles/performance/Linux/Hackstone
+set -g RUN_DATE (date "+%y%m%d")
+set -g plotImage pavlov99/gnuplot
+set -g desc work/description.html
+set -g rawDir $dataBaseDir/$ARANGODB_BRANCH/$RUN_DATE/RAW
 
 
 function createSingleRunDetailGraphs
@@ -30,11 +30,11 @@ function createSingleRunDetailGraphs
       echo 'set xtics rotate by 90 right'
       echo 'set key autotitle columnhead'
       echo 'set terminal png size 4096,480'
-      echo "set output \"work/images/$type.png\""
-      echo "plot for [n=6:8] \"/source/c\".n.\"_$type.csv\" using 4:xticlabels((int($0) % 20)==0?stringcolumn(1):\"\") title \"c\".n with lines"
+      echo "set output \"/work/$type.png\""
+      echo "plot for [n=6:8] \"/source/c\".n.\"_$type.csv\" using 4:xticlabels((int(\$0) % 20)==0?stringcolumn(1):\"\") title \"c\".n with lines"
     end >> $plotSingle
     and cat $plotSingle
-    and docker run -v (pwd)/work:/work -v $rawDir:/source pavlov99/gnuplot gnuplot $plotSingle
+    and docker run -v (pwd)/work:/work -v $rawDir:/source pavlov99/gnuplot gnuplot /$plotSingle
   end
 end
 
@@ -43,9 +43,9 @@ function createAccumulatedGraphs
   set -l INSERT_THROUGH 0
   set -l REPLACE_THROUGH 0
   for machine in c6 c7 c8
-    set GET_THROUGH = $GET_THROUGH + (tail -1 $rawDir/$machine\_get.csv | cut -d "," -f 5)
-    set INSERT_THROUGH = $INSERT_THROUGH + (tail -1 $rawDir/$machine\_insert.csv | cut -d "," -f 5)
-    set REPLACE_THROUGH = $REPLACE_THROUGH + (tail -1 $rawDir/$machine\_replace.csv | cut -d "," -f 5)
+    set GET_THROUGH (math $GET_THROUGH + (tail -1 $rawDir/$machine\_get.csv | cut -d "," -f 5))
+    set INSERT_THROUGH (math $INSERT_THROUGH + (tail -1 $rawDir/$machine\_insert.csv | cut -d "," -f 5))
+    set REPLACE_THROUGH (math $REPLACE_THROUGH + (tail -1 $rawDir/$machine\_replace.csv | cut -d "," -f 5))
   end
   echo "$ARANGODB_BRANCH;$RUN_DATE;$GET_THROUGH" >> $dataBaseDir/get_accumulated.csv
   echo "$ARANGODB_BRANCH;$RUN_DATE;$INSERT_THROUGH" >> $dataBaseDir/insert_accumulated.csv
