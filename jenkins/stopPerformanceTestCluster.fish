@@ -6,6 +6,8 @@ function cleanup
   killall -9 arangodb
   # Then kill all arangodb
   killall -9 arangod
+  # we are happy if we did not need to kill anything
+  return 0
 end
 
 
