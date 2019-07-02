@@ -1,7 +1,7 @@
 #!/usr/bin/env fish
 
-# source jenkins/helper.jenkins.fish ; prepareOskar
-# lockDirectory ; updateOskar ; clearResults
+source jenkins/helper.jenkins.fish ; prepareOskar
+lockDirectory ; updateOskar ; clearResults
 
 set -xl dataBaseDir /mnt/buildfiles/performance/hackstone
 set -xl RUN_DATE (date "+%y%m%d")
