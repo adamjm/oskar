@@ -13,6 +13,7 @@ function createSingleRunDetailGraphs
   set -l plotSingle work/hackstoneOneRun.gnuplot
   echo "Rendering single run graphs ..."
   for type in insert get replace
+    set -l outfile work/images/$type.png
     echo "  Now render $type"
     echo > $plotSingle
     begin
@@ -29,10 +30,12 @@ function createSingleRunDetailGraphs
       echo 'set xtics rotate by 90 right'
       echo 'set key autotitle columnhead'
       echo 'set terminal png size 4096,480'
-      echo "set output \"work/images/$type.png\""
+      echo "set output \"$outfile\""
       echo "plot for [n=6:8] \"source/c\".n.\"_$type.csv\" using 4:xticlabels((int(\$0) % 20)==0?stringcolumn(1):\"\") title \"c\".n with lines"
     end >> $plotSingle
     and docker run -v (pwd)/work:/work -v $rawDir:/source pavlov99/gnuplot gnuplot $plotSingle
+    and echo "<br />" >> $desc
+    and echo "<img src=\"ws/$outfile\"></img>" >> $desc
   end
 end
 
@@ -74,6 +77,7 @@ function createAccumulatedGraphs
 end
 
 function createGraphs
+  echo > $desc
   createSingleRunDetailGraphs
   createAccumulatedGraphs
 end
