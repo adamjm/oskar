@@ -72,6 +72,7 @@ function createAccumulatedGraphs
       echo "plot \"$infile\" using 2:xticlabels(stringcolumn(1)) title \"$branch\" with lines" >> $plotAccum
     end
     cat $plotAccum
+    and echo "docker run -v (pwd)/work:/work -v $accumDir:/source pavlov99/gnuplot gnuplot $plotAccum"
     and docker run -v (pwd)/work:/work -v $accumDir:/source pavlov99/gnuplot gnuplot $plotAccum
   end
 end
