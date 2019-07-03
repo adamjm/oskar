@@ -75,11 +75,18 @@ function createAccumulatedGraphs
       echo "set output \"$outfile\""
       echo "set datafile separator comma"
     end >> $plotAccum
+    set -g firstLine 1
     for branchDir in $accumDir/*/
+      if $firstline
+        echo -n "plot " >> $plotAccum
+      else
+        echo -n ", " >> $plotAccum
+      end 
       set branch (string split -- / $branchDir)[-2]
       set -l infile "source/$branch/$type.csv"
-      echo "plot \"$infile\" title \"$branch\" with linespoints" >> $plotAccum
+      echo -n "\"$infile\" title \"$branch\" with linespoints" >> $plotAccum
     end
+    echo >> $plotAccum
     cat $plotAccum
     and echo "docker run -v (pwd)/work:/work -v $accumDir:/source pavlov99/gnuplot gnuplot $plotAccum"
     and docker run -v (pwd)/work:/work -v $accumDir:/source pavlov99/gnuplot gnuplot $plotAccum
