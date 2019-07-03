@@ -46,9 +46,9 @@ function createAccumulatedGraphs
     set INSERT_THROUGH (math $INSERT_THROUGH + (tail -1 $rawDir/$machine\_insert.csv | cut -d "," -f 5))
     set REPLACE_THROUGH (math $REPLACE_THROUGH + (tail -1 $rawDir/$machine\_replace.csv | cut -d "," -f 5))
   end
-  echo "$RUN_DATE;$GET_THROUGH" >> $accumDir/$ARANGODB_BRANCH/get.csv
-  echo "$RUN_DATE;$INSERT_THROUGH" >> $accumDir/$ARANGODB_BRANCH/insert.csv
-  echo "$RUN_DATE;$REPLACE_THROUGH" >> $accumDir/$ARANGODB_BRANCH/replace.csv
+  echo "$RUN_DATE,$GET_THROUGH" >> $accumDir/$ARANGODB_BRANCH/get.csv
+  echo "$RUN_DATE,$INSERT_THROUGH" >> $accumDir/$ARANGODB_BRANCH/insert.csv
+  echo "$RUN_DATE,$REPLACE_THROUGH" >> $accumDir/$ARANGODB_BRANCH/replace.csv
 
   set -l plotAccum work/hackstoneAccumulated.gnuplot
 
