@@ -1,13 +1,21 @@
 #!/usr/bin/env fish
 
 
+function secureBranchName
+  if (string match -q -- "*/*" $ARANGODB_BRANCH)
+    return "DEBUG"
+  end
+  return $ARANGODB_BRANCH
+end
+
 set -g dataBaseDir /mnt/buildfiles/performance/Linux/Hackstone
 set -g RUN_DATE (date "+%y%m%d")
 set -g rawDir $dataBaseDir/$ARANGODB_BRANCH/$RUN_DATE/RAW
 set -g accumDir $dataBaseDir/accumulated
+set -g BRANCH_NAME (secureBranchName)
 
 mkdir -p work/images
-mkdir -p $accumDir/$ARANGODB_BRANCH/
+mkdir -p $accumDir/$BRANCH_NAME/
 
 function createSingleRunDetailGraphs
   set -l plotSingle work/hackstoneOneRun.gnuplot
@@ -46,9 +54,9 @@ function createAccumulatedGraphs
     set INSERT_THROUGH (math $INSERT_THROUGH + (tail -1 $rawDir/$machine\_insert.csv | cut -d "," -f 5))
     set REPLACE_THROUGH (math $REPLACE_THROUGH + (tail -1 $rawDir/$machine\_replace.csv | cut -d "," -f 5))
   end
-  echo "$RUN_DATE,$GET_THROUGH" >> $accumDir/$ARANGODB_BRANCH/get.csv
-  echo "$RUN_DATE,$INSERT_THROUGH" >> $accumDir/$ARANGODB_BRANCH/insert.csv
-  echo "$RUN_DATE,$REPLACE_THROUGH" >> $accumDir/$ARANGODB_BRANCH/replace.csv
+  echo "$RUN_DATE,$GET_THROUGH" >> $accumDir/$BRANCH_NAME/get.csv
+  echo "$RUN_DATE,$INSERT_THROUGH" >> $accumDir/$BRANCH_NAME/insert.csv
+  echo "$RUN_DATE,$REPLACE_THROUGH" >> $accumDir/$BRANCH_NAME/replace.csv
 
   set -l plotAccum work/hackstoneAccumulated.gnuplot
 
