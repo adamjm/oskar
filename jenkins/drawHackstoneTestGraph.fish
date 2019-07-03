@@ -65,11 +65,12 @@ function createAccumulatedGraphs
       echo 'set ylabel "throughput"'
       echo "set title \"$type\""
       echo "set output \"$outfile\""
+      echo "set datafile separator comma"
     end >> $plotAccum
     for branchDir in $accumDir/*/
       set branch (string split -- / $branchDir)[-2]
       set -l infile "source/$branch/$type.csv"
-      echo "plot \"$infile\" using 2:xticlabels(stringcolumn(1)) title \"$branch\" with lines" >> $plotAccum
+      echo "plot \"$infile\" title \"$branch\" with lines" >> $plotAccum
     end
     cat $plotAccum
     and echo "docker run -v (pwd)/work:/work -v $accumDir:/source pavlov99/gnuplot gnuplot $plotAccum"
