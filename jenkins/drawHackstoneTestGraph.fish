@@ -2,7 +2,7 @@
 
 
 function secureBranchName
-  if (string match -q -- "*/*" $ARANGODB_BRANCH)
+  if string match -q -- "*/*" $ARANGODB_BRANCH
     return "DEBUG"
   end
   return $ARANGODB_BRANCH
