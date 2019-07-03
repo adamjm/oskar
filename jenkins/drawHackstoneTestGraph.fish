@@ -23,17 +23,15 @@ function createSingleRunDetailGraphs
       echo 'set datafile separator ","'
       echo 'set autoscale fix'
       echo 'set key outside right center'
-      echo "set title $type"
+      echo "set title \"$type\""
       echo 'set xlabel "seconds"'
       echo 'set ylabel "requests"'
       echo 'set xtics rotate by 90 right'
       echo 'set key autotitle columnhead'
       echo 'set terminal png size 4096,480'
-      echo "set output \"work/$type.png\""
+      echo "set output \"work/images/$type.png\""
       echo "plot for [n=6:8] \"source/c\".n.\"_$type.csv\" using 4:xticlabels((int(\$0) % 20)==0?stringcolumn(1):\"\") title \"c\".n with lines"
     end >> $plotSingle
-    and cat $plotSingle
-    and echo "docker run -v (pwd)/work:/work -v $rawDir:/source pavlov99/gnuplot gnuplot $plotSingle"
     and docker run -v (pwd)/work:/work -v $rawDir:/source pavlov99/gnuplot gnuplot $plotSingle
   end
 end
