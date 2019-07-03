@@ -7,7 +7,7 @@ set -g rawDir $dataBaseDir/$ARANGODB_BRANCH/$RUN_DATE/RAW
 set -g accumDir $databaseDir/accumulated
 
 mkdir -p work/images
-mkdir -p $accumDir/$ARANGODB_BRANCH
+mkdir -p $accumDir/$ARANGODB_BRANCH/
 
 function createSingleRunDetailGraphs
   set -l plotSingle work/hackstoneOneRun.gnuplot
