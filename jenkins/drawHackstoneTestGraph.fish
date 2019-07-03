@@ -1,21 +1,20 @@
 #!/usr/bin/env fish
 
 
-function secureBranchName
-  if string match -q -- "*/*" $ARANGODB_BRANCH
-    return "DEBUG"
-  end
-  return $ARANGODB_BRANCH
-end
 
 set -g dataBaseDir /mnt/buildfiles/performance/Linux/Hackstone
 set -g RUN_DATE (date "+%y%m%d")
 set -g rawDir $dataBaseDir/$ARANGODB_BRANCH/$RUN_DATE/RAW
 set -g accumDir $dataBaseDir/accumulated
-set -g BRANCH_NAME (secureBranchName)
+set -g BRANCH_NAME $ARANGODB_BRANCH
+
+if string match -q -- "*/*" $BRANCH_NAME
+  set BRANCH_NAME "DEBUG"
+end
 
 mkdir -p work/images
 mkdir -p $accumDir/$BRANCH_NAME/
+
 
 function createSingleRunDetailGraphs
   set -l plotSingle work/hackstoneOneRun.gnuplot
