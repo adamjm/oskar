@@ -1,7 +1,6 @@
 #!/usr/bin/env fish
 
-source jenkins/helper.jenkins.fish ; prepareOskar
-lockDirectory ; updateOskar ; clearResults
+mkdir -p work/images
 
 set -g dataBaseDir /mnt/buildfiles/performance/Linux/Hackstone
 set -g RUN_DATE (date "+%y%m%d")
