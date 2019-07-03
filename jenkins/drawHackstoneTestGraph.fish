@@ -4,7 +4,7 @@
 set -g dataBaseDir /mnt/buildfiles/performance/Linux/Hackstone
 set -g RUN_DATE (date "+%y%m%d")
 set -g rawDir $dataBaseDir/$ARANGODB_BRANCH/$RUN_DATE/RAW
-set -g accumDir $databaseDir/accumulated
+set -g accumDir $dataBaseDir/accumulated
 
 mkdir -p work/images
 mkdir -p $accumDir/$ARANGODB_BRANCH/
