@@ -4,10 +4,10 @@
 set -g dataBaseDir /mnt/buildfiles/performance/Linux/Hackstone
 set -g RUN_DATE (date "+%y%m%d")
 set -g rawDir $dataBaseDir/$ARANGODB_BRANCH/$RUN_DATE/RAW
+set -g accumDir $databaseDir/accumulated
 
 mkdir -p work/images
-mkdir -p $dataBaseDir/$ARANGODB_BRANCH
-
+mkdir -p $accumDir/$ARANGODB_BRANCH
 
 function createSingleRunDetailGraphs
   set -l plotSingle work/hackstoneOneRun.gnuplot
@@ -46,12 +46,11 @@ function createAccumulatedGraphs
     set INSERT_THROUGH (math $INSERT_THROUGH + (tail -1 $rawDir/$machine\_insert.csv | cut -d "," -f 5))
     set REPLACE_THROUGH (math $REPLACE_THROUGH + (tail -1 $rawDir/$machine\_replace.csv | cut -d "," -f 5))
   end
-  echo "$RUN_DATE;$GET_THROUGH" >> $dataBaseDir/$ARANGODB_BRANCH/get_accumulated.csv
-  echo "$RUN_DATE;$INSERT_THROUGH" >> $dataBaseDir/$ARANGODB_BRANCH/insert_accumulated.csv
-  echo "$RUN_DATE;$REPLACE_THROUGH" >> $dataBaseDir/$ARANGODB_BRANCH/replace_accumulated.csv
+  echo "$RUN_DATE;$GET_THROUGH" >> $accumDir/$ARANGODB_BRANCH/get.csv
+  echo "$RUN_DATE;$INSERT_THROUGH" >> $accumDir/$ARANGODB_BRANCH/insert.csv
+  echo "$RUN_DATE;$REPLACE_THROUGH" >> $accumDir/$ARANGODB_BRANCH/replace.csv
 
   set -l plotAccum work/hackstoneAccumulated.gnuplot
-  set -l dates (cat $dataBaseDir/get_accumulated.csv | awk -F; '{print $2}' | sort | uniq)
 
   for type in insert get replace
     echo > $plotAccum
@@ -67,12 +66,12 @@ function createAccumulatedGraphs
       echo "set title \"$type\""
       echo "set output \"$outfile\""
     end >> $plotAccum
-    for branch in $dataBaseDir/*/; do
-      set -l infile "source/$branch/$type\_accumulated.csv"
+    for branch in $accumDir/*
+      set -l infile "source/$branch/$type.csv"
       echo "plot \"$infile\" using 2:xticlabels(stringcolumn(1)) title \"$branch\" with lines" >> $plotAccum
-    done
+    end
     cat $plotAccum
-    and docker run -v (pwd)/work:/work -v $rawDir:/source pavlov99/gnuplot gnuplot $plotAccum
+    and docker run -v (pwd)/work:/work -v $accumDir:/source pavlov99/gnuplot gnuplot $plotAccum
   end
 end
 
