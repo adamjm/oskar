@@ -76,7 +76,7 @@ function createAccumulatedGraphs
     end >> $plotAccum
     set -g firstLine 1
     for branchDir in $accumDir/*/
-      if $firstLine
+      if test $firstLine -eq 1 
         echo -n "plot " >> $plotAccum
         set firstLine 0
       else
