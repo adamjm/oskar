@@ -1,12 +1,12 @@
 #!/usr/bin/env fish
 
-mkdir -p work/images
 
 set -g dataBaseDir /mnt/buildfiles/performance/Linux/Hackstone
 set -g RUN_DATE (date "+%y%m%d")
-set -g plotImage pavlov99/gnuplot
-set -g desc work/description.html
 set -g rawDir $dataBaseDir/$ARANGODB_BRANCH/$RUN_DATE/RAW
+
+mkdir -p work/images
+mkdir -p $dataBaseDir/$ARANGODB_BRANCH
 
 
 function createSingleRunDetailGraphs
@@ -29,13 +29,11 @@ function createSingleRunDetailGraphs
       echo 'set ylabel "requests"'
       echo 'set xtics rotate by 90 right'
       echo 'set key autotitle columnhead'
-      echo 'set terminal png size 4096,480'
+      echo 'set terminal png size 2048,800'
       echo "set output \"$outfile\""
       echo "plot for [n=6:8] \"source/c\".n.\"_$type.csv\" using 4:xticlabels((int(\$0) % 20)==0?stringcolumn(1):\"\") title \"c\".n with lines"
     end >> $plotSingle
     and docker run -v (pwd)/work:/work -v $rawDir:/source pavlov99/gnuplot gnuplot $plotSingle
-    and echo "<br />" >> $desc
-    and echo "<img src=\"ws/$outfile\"></img>" >> $desc
   end
 end
 
@@ -48,36 +46,37 @@ function createAccumulatedGraphs
     set INSERT_THROUGH (math $INSERT_THROUGH + (tail -1 $rawDir/$machine\_insert.csv | cut -d "," -f 5))
     set REPLACE_THROUGH (math $REPLACE_THROUGH + (tail -1 $rawDir/$machine\_replace.csv | cut -d "," -f 5))
   end
-  echo "$ARANGODB_BRANCH;$RUN_DATE;$GET_THROUGH" >> $dataBaseDir/get_accumulated.csv
-  echo "$ARANGODB_BRANCH;$RUN_DATE;$INSERT_THROUGH" >> $dataBaseDir/insert_accumulated.csv
-  echo "$ARANGODB_BRANCH;$RUN_DATE;$REPLACE_THROUGH" >> $dataBaseDir/replace_accumulated.csv
+  echo "$RUN_DATE;$GET_THROUGH" >> $dataBaseDir/$ARANGODB_BRANCH/get_accumulated.csv
+  echo "$RUN_DATE;$INSERT_THROUGH" >> $dataBaseDir/$ARANGODB_BRANCH/insert_accumulated.csv
+  echo "$RUN_DATE;$REPLACE_THROUGH" >> $dataBaseDir/$ARANGODB_BRANCH/replace_accumulated.csv
 
-#  set -l plotAccum work/hackstoneAccumulated.gnuplot
-#  set -l dates (cat $results | awk -F, '{print $2}' | sort | uniq)
+  set -l plotAccum work/hackstoneAccumulated.gnuplot
+  set -l dates (cat $dataBaseDir/get_accumulated.csv | awk -F; '{print $2}' | sort | uniq)
 
-#  echo > $plotAccum
-#  begin
-#    echo 'set yrange [0:]'
-#    echo 'set term png size 2048,800'
-#    echo 'set key left bottom'
-#    echo 'set xtics nomirror rotate by 90 right font ",8"'
-#    echo -n 'set xtics ('
-#    set -l sep ""
-#    for i in $dates
-#      set -l secs (date -d $i +%s)
-#      set -l iso (date -I -d $i)
-#  
-#      echo -n $sep\"$iso\" $secs
-#      set sep ", "
-#    end
-#    echo ')'
-#  end >> $plotAccum
-#  and cat $plotAccum
-#  and docker run -v (pwd)/work:/work -v $rawDir:/source pavlov99/gnuplot gnuplot $plotAccum
+  for type in insert get replace
+    echo > $plotAccum
+    set -l outfile work/images/accumulated_$type.png
+    echo "  Now render accumulated $type"
+    begin
+      echo 'set yrange [0:]'
+      echo 'set term png size 2048,800'
+      echo 'set key left bottom'
+      echo 'set xtics nomirror rotate by 90 right font ",8"'
+      echo 'set xlabel "seconds"'
+      echo 'set ylabel "throughput"'
+      echo "set title \"$type\""
+      echo "set output \"$outfile\""
+    end >> $plotAccum
+    for branch in $dataBaseDir/*/; do
+      set -l infile "source/$branch/$type\_accumulated.csv"
+      echo "plot \"$infile\" using 2:xticlabels(stringcolumn(1)) title \"$branch\" with lines" >> $plotAccum
+    done
+    cat $plotAccum
+    and docker run -v (pwd)/work:/work -v $rawDir:/source pavlov99/gnuplot gnuplot $plotAccum
+  end
 end
 
 function createGraphs
-  echo > $desc
   createSingleRunDetailGraphs
   createAccumulatedGraphs
 end
