@@ -70,7 +70,7 @@ function createAccumulatedGraphs
     for branchDir in $accumDir/*/
       set branch (string split -- / $branchDir)[-2]
       set -l infile "source/$branch/$type.csv"
-      echo "plot \"$infile\" title \"$branch\" with lines" >> $plotAccum
+      echo "plot \"$infile\" title \"$branch\" with linespoints" >> $plotAccum
     end
     cat $plotAccum
     and echo "docker run -v (pwd)/work:/work -v $accumDir:/source pavlov99/gnuplot gnuplot $plotAccum"
