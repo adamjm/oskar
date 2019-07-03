@@ -66,7 +66,8 @@ function createAccumulatedGraphs
       echo "set title \"$type\""
       echo "set output \"$outfile\""
     end >> $plotAccum
-    for branch in $accumDir/*
+    for branchDir in $accumDir/*/
+      set branch (string split -- / $branchDir)[-2]
       set -l infile "source/$branch/$type.csv"
       echo "plot \"$infile\" using 2:xticlabels(stringcolumn(1)) title \"$branch\" with lines" >> $plotAccum
     end
