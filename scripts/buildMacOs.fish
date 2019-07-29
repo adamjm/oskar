@@ -38,7 +38,6 @@ set -g FULLARGS $argv \
       -DCMAKE_C_COMPILER=$CCACHEBINPATH/gcc \
       -DUSE_MAINTAINER_MODE=$MAINTAINER \
       -DUSE_ENTERPRISE=$ENTERPRISEEDITION \
-      -DUSE_JEMALLOC=$JEMALLOC_OSKAR \
       -DCMAKE_SKIP_RPATH=On \
       -DPACKAGING=Bundle \
       -DPACKAGE_TARGET_DIR=$INNERWORKDIR \
@@ -51,7 +50,14 @@ if test "$MAINTAINER" != "On"
 end
 
 if test "$ASAN" = "On"
-  echo "ASAN is not support in this environment"
+  echo "Building with ASAN"
+  set -g FULLARGS $FULLARGS \
+         -DUSE_JEMALLOC=Off \
+         -DCMAKE_C_FLAGS="-fsanitize=address -fsanitize=undefined -fno-sanitize=alignment" \
+         -DCMAKE_CXX_FLAGS="-fsanitize=address -fsanitize=undefined -fno-sanitize=vptr -fno-sanitize=alignment"
+else 
+  set -g FULLARGS $FULLARGS \
+      -DUSE_JEMALLOC=$JEMALLOC_OSKAR
 end
 
 echo cmake $FULLARGS ..
