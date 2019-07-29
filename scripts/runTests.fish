@@ -23,7 +23,7 @@ set ST "$ST""250,runSingleTest1 dump_multiple -\n"
 set ST "$ST""250,runSingleTest1 endpoints - --skipEndpointsIpv6 true\n"
 set ST "$ST""500,runSingleTest1 http_replication -\n"
 set ST "$ST""500,runSingleTest1 http_server -\n"
-set ST "$ST""500,runSingleTest1 permissions_server -\n"
+set ST "$ST""500,runSingleTest1 server_permissions -\n"
 set ST "$ST""2000,runSingleTest1 recovery 0 --testBuckets 4/0\n"
 set ST "$ST""2000,runSingleTest1 recovery 1 --testBuckets 4/1\n"
 set ST "$ST""2000,runSingleTest1 recovery 2 --testBuckets 4/2\n"
@@ -41,11 +41,14 @@ set ST "$ST""250,runSingleTest1 shell_server_aql 3 --testBuckets 5/3\n"
 set ST "$ST""250,runSingleTest1 shell_server_aql 4 --testBuckets 5/4\n"
 set ST "$ST""500,runSingleTest1 ssl_server -\n"
 set ST "$ST""250,runSingleTest1 version -\n"
+set ST "$ST""500,runSingleTest1 audit_client -\n"
+set ST "$ST""500,runSingleTest1 audit_server -\n"
 set ST "$ST""500,runSingleTest2 replication_ongoing -\n"
 set ST "$ST""250,runSingleTest2 replication_ongoing_frompresent -\n"
 set ST "$ST""500,runSingleTest2 replication_ongoing_global -\n"
 set ST "$ST""250,runSingleTest2 replication_ongoing_global_spec -\n"
 set ST "$ST""500,runSingleTest2 replication_sync -\n"
+set ST "$ST""250,runSingleTest1 hot_backup -\n"
 
 set -g STS (echo -e $ST | fgrep , | sort -rn | awk -F, '{print $2}')
 set -g STL (count $STS)
@@ -117,6 +120,7 @@ set CT "$CT""1500,runClusterTest1 shell_server_aql 13 --testBuckets 16/13 --dump
 set CT "$CT""1500,runClusterTest1 shell_server_aql 14 --testBuckets 16/14 --dumpAgencyOnError true\n"
 set CT "$CT""1500,runClusterTest1 shell_server_aql 15 --testBuckets 16/15 --dumpAgencyOnError true\n"
 set CT "$CT""500,runClusterTest1 server_http - --dumpAgencyOnError true\n"
+set CT "$CT""1000,runClusterTest1 server_permissions - --dumpAgencyOnError true\n"
 set CT "$CT""1000,runClusterTest1 ssl_server - --dumpAgencyOnError true\n"
 set CT "$CT""600,runClusterTest1 resilience_move - --dumpAgencyOnError true\n"
 set CT "$CT""750,runClusterTest1 resilience_failover - --dumpAgencyOnError true\n"
@@ -127,6 +131,7 @@ set CT "$CT""50,runClusterTest1 dump_authentication - --dumpAgencyOnError true\n
 set CT "$CT""250,runClusterTest1 dump_maskings - --dumpAgencyOnError true\n"
 set CT "$CT""250,runClusterTest1 dump_multiple - --dumpAgencyOnError true\n"
 set CT "$CT""750,runClusterTest1 http_server - --dumpAgencyOnError true\n"
+set CT "$CT""250,runClusterTest1 hot_backup -\n"
 
 set -g CTS (echo -e $CT | fgrep , | sort -rn | awk -F, '{print $2}')
 set -g CTL (count $CTS)
@@ -177,7 +182,7 @@ switch $TESTSUITE
   case "catchtest"
     resetLaunch 1
     and if test "$ASAN" = "On"
-      waitOrKill 14400 launchCatchTest
+      waitOrKill 7200 launchCatchTest
     else
       waitOrKill 1800 launchCatchTest
     end

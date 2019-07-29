@@ -76,8 +76,9 @@ set ST "$ST""250,runSingleTest1 version -\n"
 set ST "$ST""500,runSingleTest1 audit_client -\n"
 set ST "$ST""500,runSingleTest1 audit_server -\n"
 set ST "$ST""500,runSingleTest1 permissions -\n"
-set ST "$ST""500,runSingleTest1 permissions_server -\n"
+set ST "$ST""500,runSingleTest1 server_permissions -\n"
 set ST "$ST""500,runSingleTest1 paths_server -\n"
+set ST "$ST""250,runSingleTest1 hot_backup -\n"
 
 set -g STS (echo -e $ST | fgrep , | sort -rn | awk -F, '{print $2}')
 set -g STL (count $STS)
@@ -163,6 +164,7 @@ set CT "$CT""500,runClusterTest1 authentication 0 --testBuckets 3/0 --dumpAgency
 set CT "$CT""500,runClusterTest1 authentication 1 --testBuckets 3/1 --dumpAgencyOnError true\n"
 set CT "$CT""500,runClusterTest1 authentication 2 --testBuckets 3/2 --dumpAgencyOnError true\n"
 set CT "$CT""750,runClusterTest1 http_server - --dumpAgencyOnError true\n"
+set CT "$CT""1000,runClusterTest1 server_permissions - --dumpAgencyOnError true\n"
 set CT "$CT""1000,runClusterTest1 ssl_server - --dumpAgencyOnError true\n"
 set CT "$CT""500,runClusterTest1 server_http - --dumpAgencyOnError true\n"
 set CT "$CT""250,runClusterTest1 dump - --dumpAgencyOnError true\n"
@@ -171,6 +173,7 @@ set CT "$CT""50,runClusterTest1 agency - --dumpAgencyOnError true\n"
 set CT "$CT""50,runClusterTest1 dump_authentication - --dumpAgencyOnError true\n"
 set CT "$CT""250,runClusterTest1 dump_maskings - --dumpAgencyOnError true\n"
 set CT "$CT""250,runClusterTest1 dump_multiple - --dumpAgencyOnError true\n"
+set CT "$CT""250,runClusterTest1 hot_backup -\n"
 
 set -g CTS (echo -e $CT | fgrep , | sort -rn | awk -F, '{print $2}')
 set -g CTL (count $CTS)
@@ -205,23 +208,23 @@ switch $TESTSUITE
   case "cluster"
     resetLaunch 4
     and if test "$ASAN" = "On"
-      waitOrKill 50400 launchClusterTests
+      waitOrKill 64800 launchClusterTests
     else
-      waitOrKill 12600 launchClusterTests
+      waitOrKill 16200 launchClusterTests
     end
     createReport
   case "single"
     resetLaunch 1
     and if test "$ASAN" = "On"
-      waitOrKill 28800 launchSingleTests
+      waitOrKill 36000 launchSingleTests
     else
-      waitOrKill 7200 launchSingleTests
+      waitOrKill 9000 launchSingleTests
     end
     createReport
   case "catchtest"
     resetLaunch 1
     and if test "$ASAN" = "On"
-      waitOrKill 14400 launchCatchTest
+      waitOrKill 7200 launchCatchTest
     else
       waitOrKill 1800 launchCatchTest
     end

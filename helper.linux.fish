@@ -301,6 +301,17 @@ function signSourcePackage
   or begin ; popd ; return 1 ; end
 end
 
+function createCompleteTar
+  set -l RELEASE_TAG $argv[1]
+
+  pushd $WORKDIR/work
+  and runInContainer \
+	$UBUNTUBUILDIMAGE $SCRIPTSDIR/createCompleteTar.fish \
+	$RELEASE_TAG
+  and popd
+  or begin ; popd ; return 1 ; end
+end
+
 ## #############################################################################
 ## linux release
 ## #############################################################################
@@ -725,7 +736,7 @@ end
 
 function runInContainer
   if test -z "$SSH_AUTH_SOCK"
-    sudo killall --older-than 8h ssh-agent
+    sudo killall --older-than 8h ssh-agent 2>&1 > /dev/null
     eval (ssh-agent -c) > /dev/null
     for key in ~/.ssh/id_rsa ~/.ssh/id_deploy
       if test -f $key
@@ -778,6 +789,7 @@ function runInContainer
              -e SKIPGREY="$SKIPGREY" \
              -e ONLYGREY="$ONLYGREY" \
              -e TEST="$TEST" \
+             -e ARANGODB_DOCS_BRANCH="$ARANGODB_DOCS_BRANCH"\
              $argv)
   function termhandler --on-signal TERM --inherit-variable c
     if test -n "$c" ; docker stop $c >/dev/null ; end
