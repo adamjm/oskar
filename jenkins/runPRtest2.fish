@@ -5,11 +5,10 @@ set -l filename work/totalTimes.csv
 
 source jenkins/helper/jenkins.fish
 
-if test -d /mnt/buildfiles/mirror
+cleanPrepareLockUpdateClear2
+and if test -d /mnt/buildfiles/mirror
   githubMirror /mnt/buildfiles
 end
-
-cleanPrepareLockUpdateClear2
 and eval $EDITION
 and eval $STORAGE_ENGINE
 and eval $TEST_SUITE
