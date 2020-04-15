@@ -41,11 +41,13 @@ and if test -z "$UPDATE_COMMUNITY"; or test "$UPDATE_COMMUNITY" = "true"
   echo "Publish COMMUNITY"
 end
 and if test -z "$UPDATE_ENTERPRISE"; or test "$UPDATE_ENTERPRISE" = "true"
-  updateDockerHub enterprise $DOCKER_TAG
+  #updateDockerHub enterprise $DOCKER_TAG
+  echo "Publish ENTERPRISE"
 end
 and set -xg RELEASE_IS_HEAD false
 and if test -z "$UPDATE_UBI"; or test "$UPDATE_UBI" = "true"
-  updateDockerHub enterprise $DOCKER_TAG-ubi
+  #updateDockerHub enterprise $DOCKER_TAG-ubi
+  echo "Publish UBI"
 end
 
 set -l s $status
